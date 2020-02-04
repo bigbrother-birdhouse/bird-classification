@@ -89,6 +89,34 @@ where:
 - `photo/truc.jpg` is the file_path of the photo to check
 - `models/bestmodel-09-0.97.hdf5` is the file_path of the model to use
 
+## API
+An api allows to get a prediction from a given file.
+First, launch the api
+
+```
+python api.py --model_path=path_to_a_model
+```
+
+You can then request the api from : http://localhost:9090/api-birdhouse-1
+
+### Endpoints
+```
+GET /
+GET /heartbeat
+GET /supervision
+POST /bird --header 'Content-Type: application/x-www-form-urlencoded' --form 'file=@local_path_to_file'
+```
+### OpenApi documentation
+The `/doc` route leads to the OpenApi documentation
+
+### Curl examples
+
+```bash
+curl --location --request POST 'localhost:9090/api-birdhouse-1/bird' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--form 'file=@/home/john/mybird.jpg'
+```
+
 ## Run the notebook
 All the machine learning stuff has been developed step by step using a jupyter notebook.
 Feel free to run it to have a more summarized view of the deep learning process.
