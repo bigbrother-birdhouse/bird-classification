@@ -15,8 +15,10 @@ Example:
 
 from docopt import docopt
 
-from wtb.scripts.train import train
+from wtb.classification.bird_classifier import BirdClassifier
 
 if __name__ == "__main__":
     arguments = docopt(__doc__)
-    train(arguments["--train_dir"], arguments["--validation_dir"], arguments["--model_dir"])
+    classifier = BirdClassifier()
+    classifier.fit(arguments["--train_dir"], arguments["--validation_dir"], arguments["--model_dir"])
+    classifier.save(f"models/birdclassifier")

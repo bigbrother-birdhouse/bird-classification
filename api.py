@@ -2,17 +2,14 @@ import os
 import traceback
 
 import click
-import numpy as np
-from PIL import Image
 from flask import Flask, jsonify, request, Blueprint
 from flask_cors import CORS
 from flask_restplus import Api, Resource, abort
-from keras.applications.vgg16 import preprocess_input
-from keras.models import load_model
-from keras.preprocessing.image import img_to_array
 from loguru import logger
 from requests import codes as http_codes
 from werkzeug.utils import secure_filename
+
+from wtb.classification.bird_classifier import BirdClassifier
 
 API_CONF = {
     "version": "1.0.0",
@@ -34,22 +31,13 @@ def predict(image_path):
     response = {
     }
     try:
-        picture = Image.open(image_path)
-        picture = picture.resize(size=(224, 224))
-        picture_array = img_to_array(img=picture)
-        picture_array = np.expand_dims(picture_array, axis=0)
-        prediction = app.model.predict(preprocess_input(picture_array))
-
+        prediction = app.model.predict(image_path)
         logger.info(prediction)
-
-        # with open(mapper_path, 'r') as fp:
-        #     mapper = json.load(fp)
-
-        best_proba_index = np.argmax(prediction, axis=1)[0]
-        # logger.info("{} ({:.1f}%)".format(mapper.get(str(best_proba_index)), prediction[0][best_proba_index] * 100))
+        label, proba = app.model.get_human_prediction(prediction)
 
         response = {
-            'prediction': int(best_proba_index)
+            'label': label,
+            'proba': proba
         }
     except Exception:
         abort(http_codes.SERVER_ERROR, "Internal error while classifying the file")
@@ -172,7 +160,7 @@ def make_reponse(p_object=None, status_code=http_codes.OK):
 @click.command()
 @click.option("--model_path", type=click.Path(exists=True))
 def run_api(model_path: str):
-    app.model = load_model(model_path)
+    app.model = BirdClassifier.load_classifier(model_path)
     cf_port = os.getenv("PORT")
     if cf_port is None:
         app.run(host="0.0.0.0", port=9090, threaded=False)
