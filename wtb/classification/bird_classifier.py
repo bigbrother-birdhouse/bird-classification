@@ -119,7 +119,7 @@ class BirdClassifier:
 
     def predict(self, image_path: str):
         picture = Image.open(image_path)
-        picture = picture.resize(size=(240, 240))
+        picture = picture.resize(size=(IMG_ROWS, IMG_COLS))
         picture_array = img_to_array(img=picture)
         picture_array = np.expand_dims(picture_array, axis=0)
         prediction = self.classifier.predict(preprocess_input(picture_array))
