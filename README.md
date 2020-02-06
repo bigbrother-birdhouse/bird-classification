@@ -106,16 +106,26 @@ GET /heartbeat
 GET /supervision
 POST /bird --header 'Content-Type: application/x-www-form-urlencoded' --form 'file=@local_path_to_file'
 ```
-### OpenApi documentation
-The `/doc` route leads to the OpenApi documentation
 
-### Curl examples
+### Prediction
+The main endpoint allows to predict the class of a given bird picture.
 
-```bash
+Request
+```
 curl --location --request POST 'localhost:9090/api-birdhouse-1/bird' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
 --form 'file=@/home/john/mybird.jpg'
 ```
+
+Response
+```json
+{
+    "label": "accenteur mouchet",
+    "proba": 97.74004817008972
+}
+```
+### OpenApi documentation
+The `/doc` route leads to the OpenApi documentation
 
 ## Run the notebook
 All the machine learning stuff has been developed step by step using a jupyter notebook.
